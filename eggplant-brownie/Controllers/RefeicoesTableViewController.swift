@@ -40,7 +40,11 @@ class RefeicoesTableViewController: UITableViewController, AdicionaRefeicaoDeleg
             guard let indexPath = tableView.indexPath(for: celula) else { return }
             let refeicao = refeicoes[indexPath.row]
             
-            print("refeicao: \(refeicao.nome)")
+            let alerta = UIAlertController(title: refeicao.nome, message: refeicao.detalhes(), preferredStyle: .alert)
+            let botaoCancelar = UIAlertAction(title: "ok", style: .cancel, handler: nil)
+            alerta.addAction(botaoCancelar)
+            
+            present(alerta, animated: true, completion: nil)
         }
     }
     
