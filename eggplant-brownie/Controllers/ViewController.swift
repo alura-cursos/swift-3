@@ -16,12 +16,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     // MARK: - IBOutlet
     
-    @IBOutlet weak var itensTableView: UITableView?
+    @IBOutlet weak var itensTableView: UITableView!
     
     // MARK: - Atributos
     
     var delegate: AdicionaRefeicaoDelegate?
-    var itens: [Item] = []
+    var itens: [Item] = [Item(nome: "Molho de tomate", calorias: 40.0),
+                         Item(nome: "Queijo", calorias: 40.0),
+                         Item(nome: "Molho apimentado", calorias: 40.0),
+                         Item(nome: "Manjericao", calorias: 40.0)]
     var itensSelecionados: [Item] = []
     
     // MARK: - IBOutlets
@@ -34,11 +37,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     override func viewDidLoad() {
         let botaoAdicionaItem = UIBarButtonItem(title: "adicionar", style: .plain, target: self, action: #selector(adicionarItens))
         navigationItem.rightBarButtonItem = botaoAdicionaItem
-        recuperaItens()
-    }
-    
-    func recuperaItens() {
-        itens = ItemDao().recupera()
     }
     
     @objc func adicionarItens() {
@@ -48,12 +46,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func add(_ item: Item) {
         itens.append(item)
-        ItemDao().save(itens)
-        if let tableView = itensTableView {
-            tableView.reloadData()
-        } else {
-            Alerta(controller: self).exibe(mensagem: "Erro ao atualizar tabela")
-        }
+        itensTableView.reloadData()
     }
     
     // MARK: - UITableViewDataSource
@@ -91,29 +84,24 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     
-    func recuperaRefeicaoDoFormulario() -> Refeicao? {
+    // MARK: - IBActions
+    
+    @IBAction func adicionar(_ sender: Any) {
+        
         guard let nomeDaRefeicao = nomeTextField?.text else {
-            return nil
+            return
         }
         
         guard let felicidadeDaRefeicao = felicidadeTextField?.text, let felicidade = Int(felicidadeDaRefeicao) else {
-            return nil
+            return
         }
         
         let refeicao = Refeicao(nome: nomeDaRefeicao, felicidade: felicidade, itens: itensSelecionados)
         
-        return refeicao
-    }
-    
-    // MARK: - IBActions
-    
-    @IBAction func adicionar(_ sender: Any) {
-        if let refeicao = recuperaRefeicaoDoFormulario() {
-            delegate?.add(refeicao)
-            navigationController?.popViewController(animated: true)
-        } else {
-            Alerta(controller: self).exibe(mensagem: "Erro ao ler dados do formulário")
-        }
+        print("comi \(refeicao.nome) e fiquei com felicidade: \(refeicao.felicidade)")
+        
+        delegate?.add(refeicao)
+        navigationController?.popViewController(animated: true)
     }
 }
 
