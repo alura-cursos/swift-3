@@ -26,5 +26,4 @@ class RemoveRefeicaoViewController {
         
         controller.present(alerta, animated: true, completion: nil)
     }
-    
 }
